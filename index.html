@@ -9,121 +9,40 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Nasconde le barre di scorrimento del corpo della pagina */
-            font-family: sans-serif; /* Un font più leggibile per il fallback */
-            display: flex; /* Centra il contenuto in caso di fallback */
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            background-color: #f0f2f5; /* Un leggero sfondo */
+            overflow: hidden;
+            background-color: #333; /* Sfondo scuro per PC */
         }
-        .pdf-container {
-            width: 100%;
-            height: 100%;
-            display: flex; /* Per centrare l'object */
-            justify-content: center;
-            align-items: center;
-        }
-        object {
+        iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
-        .fallback-message {
-            text-align: center;
-            padding: 20px;
-            max-width: 80%; /* Limita la larghezza del messaggio su schermi grandi */
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: none; /* Inizialmente nascosto, mostrato solo se l'object fallisce */
-        }
-        .fallback-message h1 {
-            color: #333;
-            font-size: 1.5em; /* Dimensione titolo adattiva */
-            margin-bottom: 10px;
-        }
-        .fallback-message p {
-            color: #666;
-            font-size: 1em; /* Dimensione testo adattiva */
-            line-height: 1.5;
-        }
-        .fallback-message a {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        .fallback-message a:hover {
-            background-color: #0056b3;
-        }
-
-        /* Media query per schermi più piccoli, se il fallback diventa visibile */
-        @media (max-width: 768px) {
-            .fallback-message h1 {
-                font-size: 1.2em;
-            }
-            .fallback-message p {
-                font-size: 0.9em;
-            }
-            .fallback-message a {
-                padding: 8px 15px;
-                font-size: 0.9em;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="pdf-container">
-        <object data="PORTFOLIO_SACCALANI.pdf" type="application/pdf" title="PORTFOLIO VITTORIA SACCALANI">
-            <div class="fallback-message">
-                <h1>Impossibile visualizzare il PDF</h1>
-                <p>Il tuo browser o dispositivo non supporta la visualizzazione diretta del PDF in questa pagina. Nessun problema!</p>
-                <p>Clicca sul pulsante qui sotto per aprirlo o scaricarlo.</p>
-                <a href="PORTFOLIO_SACCALANI.pdf" target="_blank" rel="noopener noreferrer">Apri / Scarica il PDF</a>
-            </div>
-        </object>
-    </div>
 
-    <script>
-        // Questo script mostra il messaggio di fallback solo se l'object non viene caricato correttamente.
-        // È utile per i browser che non supportano bene <object> o per problemi di caricamento.
-        document.addEventListener('DOMContentLoaded', function() {
-            var objectElement = document.querySelector('object');
-            var fallbackMessage = document.querySelector('.fallback-message');
+<script>
+    // Funzione per rilevare se il dispositivo è mobile
+    function isMobileDevice() {
+        return /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    }
 
-            objectElement.onload = function() {
-                // Se l'object carica, non fare nulla (il PDF è visibile)
-            };
+    // Nome del file PDF
+    const pdfFile = 'PORTFOLIO_SACCALANI.pdf';
 
-            // Se l'object non ha un gestore di onload (es. su alcuni mobile browser che lo aprono esterno)
-            // o se c'è un errore, questo timeout può aiutare.
-            // È una soluzione euristica, non sempre perfetta ma utile.
-            setTimeout(function() {
-                // Controlla se l'elemento object ha un 'contentDocument' o 'data' valido
-                // Non tutti i browser lo supportano o lo espongono allo stesso modo.
-                // Questa è una logica semplificata per la rilevazione del fallimento.
-                try {
-                    if (!objectElement.contentDocument && !objectElement.data.startsWith("blob:")) {
-                        fallbackMessage.style.display = 'block'; // Mostra il fallback
-                        document.body.style.overflow = 'auto'; // Ripristina lo scroll per il fallback
-                    }
-                } catch (e) {
-                    // Potrebbe fallire su browser molto restrittivi o se l'object non è pronto.
-                    // In questo caso, per sicurezza, mostra il fallback su mobile.
-                    // Puoi affinare questo controllo se necessario.
-                    if (window.innerWidth <= 768) { // Considera "mobile"
-                        fallbackMessage.style.display = 'block';
-                        document.body.style.overflow = 'auto';
-                    }
-                }
-            }, 3000); // Attendi 3 secondi per vedere se il PDF si carica
-        });
-    </script>
+    // Controlla se l'utente è su un dispositivo mobile
+    if (isMobileDevice()) {
+        // Se è mobile, reindirizza direttamente al file PDF.
+        // Questo chiederà all'utente di scaricarlo o aprirlo con un'app nativa.
+        window.location.href = pdfFile;
+    } else {
+        // Se è un PC, crea e inserisci l'iframe per visualizzare il PDF.
+        const iframe = document.createElement('iframe');
+        iframe.src = pdfFile;
+        iframe.title = "PORTFOLIO VITTORIA SACCALANI";
+        document.body.appendChild(iframe);
+    }
+</script>
+
 </body>
 </html>
